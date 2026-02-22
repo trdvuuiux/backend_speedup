@@ -1,0 +1,26 @@
+# Database Configuration
+database:
+  host: "localhost"
+  port: 3306
+  username: "root"
+  password: "12345678"
+  name: "speed_up"
+
+# JWT Configuration
+jwt:
+  secret_key: "your-super-secret-key-change-in-production"
+  algorithm: "HS256"
+  access_token_expire_minutes: 30
+  refresh_token_expire_days: 7
+
+# Email SMTP Configuration
+email:
+  smtp_host: "smtp.gmail.com"
+  smtp_port: 587
+  smtp_user: "your-email@gmail.com"
+  smtp_password: "your-app-password"
+
+# App Configuration
+app:
+  name: "Speed Up Backend"
+  debug: true
