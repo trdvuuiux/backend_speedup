@@ -1,7 +1,6 @@
 # CRUD module
 from app.crud.auth_crud import (
     generate_otp,
-    generate_username_from_email,
     create_user,
     get_user_by_email,
     get_user_by_id,
@@ -9,12 +8,13 @@ from app.crud.auth_crud import (
     update_user_tokens,
     clear_user_tokens,
     verify_otp,
+    send_otp_for_user,
+    verify_otp_for_user,
     generate_tokens_for_user,
 )
 
 __all__ = [
     "generate_otp",
-    "generate_username_from_email",
     "create_user",
     "get_user_by_email",
     "get_user_by_id",
@@ -22,5 +22,7 @@ __all__ = [
     "update_user_tokens",
     "clear_user_tokens",
     "verify_otp",
+    "send_otp_for_user",
+    "verify_otp_for_user",
     "generate_tokens_for_user",
 ]

@@ -1,6 +1,4 @@
-import aiosmtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
+import resend
 from typing import Optional
 from app.core.config import settings
 import logging
@@ -10,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 async def send_otp_email(to_email: str, otp: str, full_name: str) -> bool:
     """
-    Send OTP email to user
+    Send OTP email to user using Resend
     
     Args:
         to_email: Recipient email address
@@ -21,29 +19,9 @@ async def send_otp_email(to_email: str, otp: str, full_name: str) -> bool:
         bool: True if email sent successfully
     """
     try:
-        # Create message
-        message = MIMEMultipart("alternative")
-        message["Subject"] = "Mã xác thực OTP - Speed Up"
-        message["From"] = settings.SMTP_USER
-        message["To"] = to_email
+        # Set API key
+        resend.api_key = settings.RESEND_API_KEY
         
-        # Plain text version
-        text_content = f"""
-        Xin chào {full_name},
-        
-        Cảm ơn bạn đã đăng ký tài khoản Speed Up!
-        
-        Mã xác thực OTP của bạn là: {otp}
-        
-        Mã này sẽ hết hạn sau 5 phút.
-        
-        Nếu bạn không yêu cầu mã này, vui lòng bỏ qua email này.
-        
-        Trân trọng,
-        Đội ngũ Speed Up
-        """
-        
-        # HTML version
         html_content = f"""
         <!DOCTYPE html>
         <html>
@@ -116,25 +94,26 @@ async def send_otp_email(to_email: str, otp: str, full_name: str) -> bool:
         </html>
         """
         
-        # Attach both versions
-        message.attach(MIMEText(text_content, "plain"))
-        message.attach(MIMEText(html_content, "html"))
+        params = {
+            "from": settings.FROM_EMAIL,
+            "to": to_email,
+            "subject": "Mã xác thực OTP - Speed Up",
+            "html": html_content,
+        }
         
-        # Send email
-        await aiosmtplib.send(
-            message,
-            hostname=settings.SMTP_HOST,
-            port=settings.SMTP_PORT,
-            username=settings.SMTP_USER,
-            password=settings.SMTP_PASSWORD,
-            start_tls=True
-        )
+        response = resend.Emails.send(params)
         
         logger.info(f"OTP email sent successfully to {to_email}")
         return True
         
     except Exception as e:
         logger.error(f"Failed to send OTP email to {to_email}: {str(e)}")
+        # Log OTP to console for debugging
+        print(f"\n=== DEBUG: OTP Email ===")
+        print(f"To: {to_email}")
+        print(f"OTP: {otp}")
+        print(f"Full Name: {full_name}")
+        print(f"========================\n")
         return False
 
 
@@ -150,10 +129,7 @@ async def send_welcome_email(to_email: str, full_name: str) -> bool:
         bool: True if email sent successfully
     """
     try:
-        message = MIMEMultipart("alternative")
-        message["Subject"] = "Chào mừng đến với Speed Up!"
-        message["From"] = settings.SMTP_USER
-        message["To"] = to_email
+        resend.api_key = settings.RESEND_API_KEY
         
         html_content = f"""
         <!DOCTYPE html>
@@ -208,16 +184,14 @@ async def send_welcome_email(to_email: str, full_name: str) -> bool:
         </html>
         """
         
-        message.attach(MIMEText(html_content, "html"))
+        params = {
+            "from": settings.FROM_EMAIL,
+            "to": to_email,
+            "subject": "Chào mừng đến với Speed Up!",
+            "html": html_content,
+        }
         
-        await aiosmtplib.send(
-            message,
-            hostname=settings.SMTP_HOST,
-            port=settings.SMTP_PORT,
-            username=settings.SMTP_USER,
-            password=settings.SMTP_PASSWORD,
-            start_tls=True
-        )
+        resend.Emails.send(params)
         
         logger.info(f"Welcome email sent successfully to {to_email}")
         return True

@@ -33,6 +33,11 @@ class Settings:
     REFRESH_TOKEN_EXPIRE_DAYS: int = config.get("jwt", {}).get("refresh_token_expire_days", 7)
 
     # Email
+    EMAIL_PROVIDER: str = config.get("email", {}).get("provider", "resend")
+    RESEND_API_KEY: str = config.get("email", {}).get("resend_api_key", "")
+    FROM_EMAIL: str = config.get("email", {}).get("from_email", "Speed Up <onboarding@resend.dev>")
+    
+    # SMTP (legacy)
     SMTP_HOST: str = config.get("email", {}).get("smtp_host", "smtp.gmail.com")
     SMTP_PORT: int = config.get("email", {}).get("smtp_port", 587)
     SMTP_USER: str = config.get("email", {}).get("smtp_user", "")

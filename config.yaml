@@ -13,14 +13,13 @@ jwt:
   access_token_expire_minutes: 30
   refresh_token_expire_days: 7
 
-# Email SMTP Configuration
+# Email Configuration (Resend - Free 3000 emails/month)
 email:
-  smtp_host: "smtp.gmail.com"
-  smtp_port: 587
-  smtp_user: "your-email@gmail.com"
-  smtp_password: "your-app-password"
+  provider: "resend"
+  resend_api_key: "re_CCJjQRg4_G4VwqxKdg5e5gxJHARCra5Ad"
+  from_email: "Speed Up <onboarding@resend.dev>"  # Use Resend's test domain or your own
 
 # App Configuration
 app:
-  name: "Speed Up Backend"
+  name: "Speed Up"
   debug: true

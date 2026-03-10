@@ -6,6 +6,8 @@ import uvicorn
 
 from app.core.config import settings
 from app.api.auth.auth_routes import router as auth_router
+from app.api.content.content_routes import router as content_router
+from app.api.admin.admin_routes import router as admin_router
 from app.core.database import engine, Base
 
 # Configure logging
@@ -45,6 +47,8 @@ app.add_middleware(
 
 # Include routers
 app.include_router(auth_router)
+app.include_router(content_router)
+app.include_router(admin_router)
 
 @app.get("/")
 async def root():

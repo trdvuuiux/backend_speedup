@@ -9,17 +9,29 @@ class Account(Base):
     __tablename__ = "accounts"
 
     id = Column(Integer, primary_key=True, index=True)
-    username = Column(String(50), unique=True, nullable=True, index=True)
     password = Column(String(255), nullable=False)
     email = Column(String(100), unique=True, nullable=False, index=True)
     full_name = Column(String(100), nullable=True)
     role = Column(Enum('admin', 'student', 'teacher'), default='student')
-    
+
+    # Thông tin bổ sung
+    phone_number = Column(String(20), nullable=True)
+    avatar_url = Column(String(500), nullable=True)
+    address = Column(String(255), nullable=True)
+
     # Xác thực & Token
     otp = Column(String(10), nullable=True)
     created_otp = Column(DateTime, nullable=True)
+    otp_attempts = Column(Integer, default=0)  # Max 5 attempts
+    email_verified = Column(Boolean, default=False)
     access_token = Column(Text, nullable=True)
     refresh_token = Column(Text, nullable=True)
+
+    # Subscription
+    subscription_type = Column(Enum('free', 'plus', 'pro', 'vip', 'max'), default='free')
+    subscription_start = Column(DateTime, nullable=True)
+    subscription_end = Column(DateTime, nullable=True)
+    is_active = Column(Boolean, default=True)
     
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
@@ -101,6 +113,7 @@ class Question(Base):
     id = Column(Integer, primary_key=True, index=True)
     exercise_id = Column(Integer, ForeignKey("exercises.id", ondelete="CASCADE"), nullable=False)
     content = Column(Text, nullable=False)
+    image_url = Column(String(500), nullable=True)
     type = Column(Enum('single', 'multi', 'essay'), nullable=False)
     level = Column(Enum('easy', 'medium', 'hard'), default='medium')
     point = Column(Double, default=1.0)
