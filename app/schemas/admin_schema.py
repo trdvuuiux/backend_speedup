@@ -59,14 +59,14 @@ class ExerciseCreateRequest(BaseModel):
     specialization_id: int
     name: str = Field(..., min_length=1, max_length=255)
     difficulty_level: str = 'medium'
-    time_limit: int = 45
+    duration: int = 45
 
 
 class ExerciseUpdateRequest(BaseModel):
     specialization_id: Optional[int] = None
     name: Optional[str] = Field(None, min_length=1, max_length=255)
     difficulty_level: Optional[str] = None
-    time_limit: Optional[int] = None
+    duration: Optional[int] = None
 
 
 # ========================================================

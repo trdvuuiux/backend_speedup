@@ -7,7 +7,7 @@ from app.core.database import get_db
 from app.core.security import decode_token
 from app.crud.auth_crud import get_user_by_id
 from app.crud import admin_crud, content_crud
-from app.models.models import Account
+from app.models.models import Account, Role
 from app.schemas.admin_schema import (
     # Grade
     GradeCreateRequest, GradeUpdateRequest,
@@ -223,7 +223,7 @@ async def create_exercise(
         raise HTTPException(status_code=404, detail="Specialization not found")
     exercise = admin_crud.create_exercise(
         db, specialization_id=request.specialization_id, name=request.name,
-        difficulty_level=request.difficulty_level, time_limit=request.time_limit,
+        difficulty_level=request.difficulty_level, duration=request.duration,
         created_by=admin.id
     )
     return ExerciseResponse.model_validate(exercise)
@@ -244,7 +244,7 @@ async def update_exercise(
     exercise = admin_crud.update_exercise(
         db, exercise_id,
         specialization_id=request.specialization_id, name=request.name,
-        difficulty_level=request.difficulty_level, time_limit=request.time_limit
+        difficulty_level=request.difficulty_level, duration=request.duration
     )
     if not exercise:
         raise HTTPException(status_code=404, detail="Exercise not found")

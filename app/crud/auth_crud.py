@@ -1,6 +1,6 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from datetime import datetime, timedelta
-from app.models.models import Account
+from app.models.models import Account, Role
 from app.core.security import get_password_hash, verify_password, create_access_token, create_refresh_token
 from app.core.config import settings
 import secrets
@@ -12,11 +12,19 @@ def generate_otp(length: int = 6) -> str:
     return ''.join(secrets.choice(string.digits) for _ in range(length))
 
 
+def get_role_by_name(db: Session, name: str) -> Role:
+    """Get role by name"""
+    return db.query(Role).filter(Role.name == name).first()
+
+
 def create_user(db: Session, email: str, password: str, full_name: str) -> Account:
     """Create a new user"""
     hashed_password = get_password_hash(password)
     
     otp = generate_otp()
+    
+    # Lookup student role
+    student_role = get_role_by_name(db, 'student')
     
     db_user = Account(
         email=email,
@@ -24,7 +32,7 @@ def create_user(db: Session, email: str, password: str, full_name: str) -> Accou
         full_name=full_name,
         otp=otp,
         created_otp=datetime.utcnow(),
-        role='student'
+        role_id=student_role.id if student_role else None
     )
     db.add(db_user)
     db.commit()
@@ -34,12 +42,12 @@ def create_user(db: Session, email: str, password: str, full_name: str) -> Accou
 
 def get_user_by_email(db: Session, email: str) -> Account:
     """Get user by email"""
-    return db.query(Account).filter(Account.email == email).first()
+    return db.query(Account).options(joinedload(Account.role_rel)).filter(Account.email == email).first()
 
 
 def get_user_by_id(db: Session, user_id: int) -> Account:
     """Get user by ID"""
-    return db.query(Account).filter(Account.id == user_id).first()
+    return db.query(Account).options(joinedload(Account.role_rel)).filter(Account.id == user_id).first()
 
 
 def verify_user_password(db: Session, email: str, password: str) -> Account:

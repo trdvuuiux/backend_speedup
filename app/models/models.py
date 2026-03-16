@@ -4,6 +4,19 @@ from sqlalchemy.sql import func
 from app.core.database import Base
 
 
+class Role(Base):
+    """Vai trò người dùng"""
+    __tablename__ = "roles"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String(50), unique=True, nullable=False)  # admin, student, teacher
+    description = Column(String(255), nullable=True)
+    created_at = Column(DateTime, server_default=func.now())
+
+    # Relationships
+    accounts = relationship("Account", back_populates="role_rel")
+
+
 class Account(Base):
     """Tài khoản người dùng"""
     __tablename__ = "accounts"
@@ -12,7 +25,7 @@ class Account(Base):
     password = Column(String(255), nullable=False)
     email = Column(String(100), unique=True, nullable=False, index=True)
     full_name = Column(String(100), nullable=True)
-    role = Column(Enum('admin', 'student', 'teacher'), default='student')
+    role_id = Column(Integer, ForeignKey("roles.id", ondelete="SET NULL"), nullable=True)
 
     # Thông tin bổ sung
     phone_number = Column(String(20), nullable=True)
@@ -37,9 +50,15 @@ class Account(Base):
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
 
     # Relationships
+    role_rel = relationship("Role", back_populates="accounts")
     created_specializations = relationship("Specialization", back_populates="creator")
     created_exercises = relationship("Exercise", back_populates="creator")
     exam_attempts = relationship("ExamAttempt", back_populates="account")
+
+    @property
+    def role(self):
+        """Backward-compatible property: returns role name string"""
+        return self.role_rel.name if self.role_rel else None
 
 
 class Grade(Base):
@@ -95,7 +114,7 @@ class Exercise(Base):
     specialization_id = Column(Integer, ForeignKey("specializations.id", ondelete="CASCADE"), nullable=False)
     name = Column(String(255), nullable=False)
     difficulty_level = Column(Enum('easy', 'medium', 'hard', 'expert'), default='medium')
-    time_limit = Column(Integer, default=45)
+    duration = Column(Integer, default=45)
     created_by = Column(Integer, ForeignKey("accounts.id", ondelete="SET NULL"), nullable=True)
     created_at = Column(DateTime, server_default=func.now())
 

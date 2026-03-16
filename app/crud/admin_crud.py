@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import func
 from app.models.models import (
-    Account, Grade, Topic, Specialization, Exercise,
+    Account, Role, Grade, Topic, Specialization, Exercise,
     Question, QuestionOption, ExamAttempt
 )
 
@@ -112,10 +112,10 @@ def delete_specialization(db: Session, specialization_id: int):
 # Exercise CRUD (Admin)
 # ========================================================
 
-def create_exercise(db: Session, specialization_id: int, name: str, difficulty_level: str = 'medium', time_limit: int = 45, created_by: int = None):
+def create_exercise(db: Session, specialization_id: int, name: str, difficulty_level: str = 'medium', duration: int = 45, created_by: int = None):
     exercise = Exercise(
         specialization_id=specialization_id, name=name,
-        difficulty_level=difficulty_level, time_limit=time_limit,
+        difficulty_level=difficulty_level, duration=duration,
         created_by=created_by
     )
     db.add(exercise)
@@ -140,6 +140,10 @@ def delete_exercise(db: Session, exercise_id: int):
     exercise = db.query(Exercise).filter(Exercise.id == exercise_id).first()
     if not exercise:
         return False
+    # Xóa các exam_attempts liên quan trước
+    db.query(ExamAttempt).filter(ExamAttempt.exercise_id == exercise_id).delete()
+    # Xóa các questions liên quan trước
+    db.query(Question).filter(Question.exercise_id == exercise_id).delete()
     db.delete(exercise)
     db.commit()
     return True
@@ -211,10 +215,10 @@ def delete_question(db: Session, question_id: int):
 # ========================================================
 
 def get_all_users(db: Session, page: int = 1, page_size: int = 20, role: str = None, is_active: bool = None, search: str = None):
-    query = db.query(Account)
+    query = db.query(Account).options(joinedload(Account.role_rel)).join(Role, Account.role_id == Role.id)
 
     if role:
-        query = query.filter(Account.role == role)
+        query = query.filter(Role.name == role)
     if is_active is not None:
         query = query.filter(Account.is_active == is_active)
     if search:
@@ -229,9 +233,17 @@ def get_all_users(db: Session, page: int = 1, page_size: int = 20, role: str = N
 
 
 def update_user_by_admin(db: Session, user_id: int, **kwargs):
-    user = db.query(Account).filter(Account.id == user_id).first()
+    user = db.query(Account).options(joinedload(Account.role_rel)).filter(Account.id == user_id).first()
     if not user:
         return None
+    
+    # Handle role separately — convert role name to role_id
+    role_name = kwargs.pop('role', None)
+    if role_name is not None:
+        role = db.query(Role).filter(Role.name == role_name).first()
+        if role:
+            user.role_id = role.id
+    
     for key, value in kwargs.items():
         if value is not None:
             setattr(user, key, value)
@@ -266,9 +278,9 @@ def activate_user(db: Session, user_id: int):
 
 def get_dashboard_stats(db: Session):
     total_users = db.query(func.count(Account.id)).scalar()
-    total_students = db.query(func.count(Account.id)).filter(Account.role == 'student').scalar()
-    total_teachers = db.query(func.count(Account.id)).filter(Account.role == 'teacher').scalar()
-    total_admins = db.query(func.count(Account.id)).filter(Account.role == 'admin').scalar()
+    total_students = db.query(func.count(Account.id)).join(Role, Account.role_id == Role.id).filter(Role.name == 'student').scalar()
+    total_teachers = db.query(func.count(Account.id)).join(Role, Account.role_id == Role.id).filter(Role.name == 'teacher').scalar()
+    total_admins = db.query(func.count(Account.id)).join(Role, Account.role_id == Role.id).filter(Role.name == 'admin').scalar()
     active_users = db.query(func.count(Account.id)).filter(Account.is_active == True).scalar()
     inactive_users = db.query(func.count(Account.id)).filter(Account.is_active == False).scalar()
     total_grades = db.query(func.count(Grade.id)).scalar()

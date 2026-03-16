@@ -82,7 +82,7 @@ class ExerciseBase(BaseModel):
     specialization_id: int
     name: str
     difficulty_level: str = 'medium'
-    time_limit: int = 45
+    duration: int = 45
 
 
 class ExerciseResponse(ExerciseBase):

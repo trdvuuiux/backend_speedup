@@ -662,7 +662,7 @@ Authorization: Bearer <access_token>
       "specialization_id": 1,
       "name": "Bài kiểm tra: Dao động điều hòa - Cơ bản",
       "difficulty_level": "easy",
-      "time_limit": 45,
+      "duration": 45,
       "created_by": null,
       "created_at": "2026-02-28T00:00:00"
     }
@@ -693,7 +693,7 @@ Authorization: Bearer <access_token>
       "specialization_id": 1,
       "name": "Bài kiểm tra: Dao động điều hòa - Cơ bản",
       "difficulty_level": "easy",
-      "time_limit": 45,
+      "duration": 45,
       "created_by": null,
       "created_at": "2026-02-28T00:00:00"
     }
@@ -725,7 +725,7 @@ Authorization: Bearer <access_token>
       "specialization_id": 1,
       "name": "Bài kiểm tra: Dao động điều hòa - Cơ bản",
       "difficulty_level": "easy",
-      "time_limit": 45,
+      "duration": 45,
       "created_by": null,
       "created_at": "2026-02-28T00:00:00"
     }
@@ -754,7 +754,7 @@ Authorization: Bearer <access_token>
   "specialization_id": 1,
   "name": "Bài kiểm tra: Dao động điều hòa - Cơ bản",
   "difficulty_level": "easy",
-  "time_limit": 45,
+  "duration": 45,
   "created_by": null,
   "created_at": "2026-02-28T00:00:00"
 }
@@ -784,7 +784,7 @@ Authorization: Bearer <access_token>
     "specialization_id": 1,
     "name": "Bài kiểm tra: Dao động điều hòa - Cơ bản",
     "difficulty_level": "easy",
-    "time_limit": 45,
+    "duration": 45,
     "created_by": null,
     "created_at": "2026-02-28T00:00:00"
   },
@@ -811,7 +811,7 @@ Authorization: Bearer <access_token>
 }
 ```
 
-> **Lưu ý:** `time_limit` tính bằng phút. Frontend nên ẩn `is_correct` và `explanation` khi học sinh đang làm bài.
+> **Lưu ý:** `duration` tính bằng phút. Frontend nên ẩn `is_correct` và `explanation` khi học sinh đang làm bài.
 
 ---
 
@@ -902,7 +902,7 @@ Authorization: Bearer <access_token>
         "specialization_id": 1,
         "name": "Bài kiểm tra: Dao động điều hòa - Cơ bản",
         "difficulty_level": "easy",
-        "time_limit": 45,
+        "duration": 45,
         "created_by": null,
         "created_at": "2026-02-28T00:00:00"
       }
@@ -942,7 +942,7 @@ Authorization: Bearer <access_token>
         "specialization_id": 1,
         "name": "Bài kiểm tra: Dao động điều hòa - Cơ bản",
         "difficulty_level": "easy",
-        "time_limit": 45,
+        "duration": 45,
         "created_by": null,
         "created_at": "2026-02-28T00:00:00"
       }
@@ -982,7 +982,7 @@ Authorization: Bearer <access_token>
     "specialization_id": 1,
     "name": "Bài kiểm tra: Dao động điều hòa - Cơ bản",
     "difficulty_level": "easy",
-    "time_limit": 45,
+    "duration": 45,
     "created_by": null,
     "created_at": "2026-02-28T00:00:00"
   },
@@ -1533,7 +1533,7 @@ Authorization: Bearer <access_token>
   "specialization_id": 1,
   "name": "Bài kiểm tra: Dao động điều hòa - Cơ bản",
   "difficulty_level": "easy",
-  "time_limit": 45
+  "duration": 45
 }
 ```
 
